@@ -68,8 +68,8 @@ public class BridgeProvider extends ContentProvider {
         Bundle out = new Bundle();
         if (!callerAllowed()) {
             out.putString("status", "denied");
-            out.putString("msg", "только shell/root (uid 2000/0), вызов с uid "
-                    + Binder.getCallingUid() + " отклонён");
+            out.putString("msg", "chỉ dành cho shell/root (uid 2000/0), lệnh gọi từ uid "
+                    + Binder.getCallingUid() + " bị từ chối");
             Log.w(TAG, "bridge denied uid=" + Binder.getCallingUid());
             return out;
         }
@@ -93,7 +93,7 @@ public class BridgeProvider extends ContentProvider {
                 }
             } catch (Throwable ignored) {}
             out.putString("status", "app_closed");
-            out.putString("msg", "GC Tune не запущен — откройте приложение и повторите");
+            out.putString("msg", "GC Tune chưa chạy — hãy mở ứng dụng rồi thử lại");
             return out;
         }
 
@@ -123,7 +123,7 @@ public class BridgeProvider extends ContentProvider {
         }
 
         out.putString("status", "unknown_method");
-        out.putString("msg", "методы: exec, status, ping");
+        out.putString("msg", "các phương thức: exec, status, ping");
         return out;
     }
 

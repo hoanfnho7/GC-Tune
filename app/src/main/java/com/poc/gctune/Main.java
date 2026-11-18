@@ -156,7 +156,7 @@ public class Main extends Activity {
     /** Appended by the payload after the user command; travels inside the blob. */
     private static final String RC_MARK = "__RC__";
     private static final Pattern RC_PAT = Pattern.compile(RC_MARK + "(-?\\d+)\\s*$");
-    private static final String NO_OUTPUT = "(команда выполнена без текстового вывода)";
+    private static final String NO_OUTPUT = "(lệnh đã chạy xong, không có kết quả văn bản)";
     private static final int MAX_ENTRIES = 60;
 
     private Handler h;
@@ -497,7 +497,7 @@ public class Main extends Activity {
     }
 
     private View pasteButton() {
-        TextView paste = Ui.label(this, "Вставить", 13.5f, Ui.ACCENT);
+        TextView paste = Ui.label(this, "Dán", 13.5f, Ui.ACCENT);
         paste.setGravity(Gravity.CENTER);
         paste.setPadding(Ui.dp(this, 18), Ui.dp(this, 12), Ui.dp(this, 18), Ui.dp(this, 12));
         paste.setBackground(Ui.pillRipple(this, Ui.PRIMARY, 0x40FFFFFF));
@@ -535,9 +535,9 @@ public class Main extends Activity {
         navItems[PAGE_SHELL] = navItem(PAGE_SHELL,
                 M3Icons.terminal(Ui.MUTED, Ui.dp(this, 22)), "Shell");
         navItems[PAGE_CUSTOM] = navItem(PAGE_CUSTOM,
-                M3Icons.grid(Ui.MUTED, Ui.dp(this, 22)), "Кастомизация");
+                M3Icons.grid(Ui.MUTED, Ui.dp(this, 22)), "Tùy biến");
         navItems[PAGE_SETTINGS] = navItem(PAGE_SETTINGS,
-                M3Icons.tune(Ui.MUTED, Ui.dp(this, 22)), "Настройки");
+                M3Icons.tune(Ui.MUTED, Ui.dp(this, 22)), "Cài đặt");
         for (View v : navItems) {
             if (v == null) continue;
             row.addView(v, new LinearLayout.LayoutParams(0, -2, 1f));
@@ -782,7 +782,7 @@ public class Main extends Activity {
         cmdInput.setBackground(null);
         cmdInput.setTextColor(Ui.TEXT);
         cmdInput.setHintTextColor(Ui.MUTED);
-        cmdInput.setHint("Команда или скрипт");
+        cmdInput.setHint("Lệnh hoặc script");
         cmdInput.setTypeface(Typeface.MONOSPACE);
         cmdInput.setTextSize(14f);
         cmdInput.setGravity(Gravity.TOP | Gravity.START);
@@ -832,7 +832,7 @@ public class Main extends Activity {
         // ---- header: caption + copy-to-clipboard
         LinearLayout head = Ui.row(this);
         head.setPadding(Ui.dp(this, 18), Ui.dp(this, 12), Ui.dp(this, 12), Ui.dp(this, 10));
-        head.addView(Ui.section(this, "Консоль"),
+        head.addView(Ui.section(this, "Console"),
                 new LinearLayout.LayoutParams(0, -2, 1f));
 
         ImageView copyBtn = new ImageView(this);
@@ -902,7 +902,7 @@ public class Main extends Activity {
     /** Plain-text dump of the console for the copy button. */
     private void copyLog() {
         if (entries.isEmpty()) {
-            toast("Консоль пуста");
+            toast("Console trống");
             return;
         }
         StringBuilder sb = new StringBuilder();
@@ -911,8 +911,8 @@ public class Main extends Activity {
                 sb.append(e.out).append('\n');
             } else {
                 sb.append("uid1000$ ").append(e.cmd).append('\n');
-                if (e.pending) sb.append("…выполняется\n");
-                else if (e.failed) sb.append("нет ответа от uid 1000\n");
+                if (e.pending) sb.append("…đang chạy\n");
+                else if (e.failed) sb.append("uid 1000 không phản hồi\n");
                 else {
                     sb.append(e.out).append('\n');
                     if (e.rc != RC_UNKNOWN) sb.append("rc ").append(e.rc).append('\n');
@@ -924,9 +924,9 @@ public class Main extends Activity {
             android.content.ClipboardManager clipboard =
                     (android.content.ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
             clipboard.setPrimaryClip(android.content.ClipData.newPlainText("GC Tune", sb.toString()));
-            toast("Вывод скопирован");
+            toast("Đã sao chép kết quả");
         } catch (Throwable t) {
-            toast("Не удалось скопировать");
+            toast("Không sao chép được");
         }
     }
 
@@ -940,8 +940,8 @@ public class Main extends Activity {
         root.setPadding(Ui.dp(this, 18), Ui.dp(this, 22), Ui.dp(this, 18), Ui.dp(this, 30));
         scroll.addView(root, new FrameLayout.LayoutParams(-1, -2));
 
-        TextView title = Ui.label(this, "Тема", 26f, Ui.TEXT);
-        root.addView(pageTitle(title, "Установка и применение .itz"));
+        TextView title = Ui.label(this, "Chủ đề", 26f, Ui.TEXT);
+        root.addView(pageTitle(title, "Cài đặt và áp dụng .itz"));
 
         themeHint = hintCard();
         themeHint.setVisibility(View.GONE);
@@ -953,14 +953,14 @@ public class Main extends Activity {
         LinearLayout fileCard = Ui.col(this);
         fileCard.setBackground(Ui.shape(this, Ui.SURFACE, 12f, Ui.BORDER_SOFT, 1f));
         fileCard.setPadding(Ui.dp(this, 14), Ui.dp(this, 14), Ui.dp(this, 14), Ui.dp(this, 14));
-        fileCard.addView(Ui.section(this, "Файл темы (.itz)"));
+        fileCard.addView(Ui.section(this, "Tệp chủ đề (.itz)"));
 
-        themeFileText = Ui.text(this, "файл не выбран", 14f, Ui.TEXT);
+        themeFileText = Ui.text(this, "chưa chọn tệp", 14f, Ui.TEXT);
         LinearLayout.LayoutParams fileLp = new LinearLayout.LayoutParams(-2, -2);
         fileLp.topMargin = Ui.dp(this, 8);
         fileCard.addView(themeFileText, fileLp);
 
-        View choose = pillButton(M3Icons.folder(Ui.ACCENT, Ui.dp(this, 18)), "Выбрать .itz",
+        View choose = pillButton(M3Icons.folder(Ui.ACCENT, Ui.dp(this, 18)), "Chọn .itz",
                 new View.OnClickListener() {
                     @Override public void onClick(View v) { pickThemeFile(); }
                 });
@@ -974,7 +974,7 @@ public class Main extends Activity {
 
         // ---- install button
         View install = pillButton(M3Icons.play(Ui.ACCENT, Ui.dp(this, 18)),
-                "Установить и открыть iTheme",
+                "Cài đặt và mở iTheme",
                 new View.OnClickListener() {
                     @Override public void onClick(View v) { runThemeInstall(); }
                 });
@@ -987,14 +987,14 @@ public class Main extends Activity {
         LinearLayout statusCard = Ui.col(this);
         statusCard.setBackground(Ui.shape(this, Ui.INPUT_BG, 12f, Ui.BORDER, 1.2f));
         statusCard.setPadding(Ui.dp(this, 14), Ui.dp(this, 12), Ui.dp(this, 14), Ui.dp(this, 12));
-        themeStatusText = Ui.text(this, "Выберите .itz и нажмите «Установить»", 13f, Ui.MUTED);
+        themeStatusText = Ui.text(this, "Chọn .itz rồi nhấn «Cài đặt»", 13f, Ui.MUTED);
         statusCard.addView(themeStatusText);
         LinearLayout.LayoutParams statusLp = new LinearLayout.LayoutParams(-1, -2);
         statusLp.bottomMargin = Ui.dp(this, 14);
         root.addView(statusCard, statusLp);
 
         TextView note = Ui.text(this,
-                "Копия файла — в Download/gctune. Применение — при открытом режиме игры.",
+                "Bản sao tệp nằm trong Download/gctune. Chỉ áp dụng khi chế độ game đang mở.",
                 11.5f, Ui.MUTED);
         LinearLayout.LayoutParams noteLp = new LinearLayout.LayoutParams(-1, -2);
         noteLp.bottomMargin = Ui.dp(this, 24);
@@ -1078,10 +1078,10 @@ public class Main extends Activity {
         card.addView(arrow, new LinearLayout.LayoutParams(Ui.dp(this, 32), Ui.dp(this, 32)));
 
         LinearLayout col = Ui.col(this);
-        col.addView(Ui.label(this, "Откройте режим игры", 15.5f, Ui.ACCENT));
+        col.addView(Ui.label(this, "Hãy mở chế độ game", 15.5f, Ui.ACCENT));
         TextView sub = Ui.text(this,
-                "Команда выполнится сама, как только откроете шторку Game Cube — "
-                        + "FpsManager запустит её автоматически.", 12f, Ui.TEXT);
+                "Lệnh sẽ tự chạy ngay khi bạn mở thanh Game Cube — "
+                        + "FpsManager sẽ tự khởi chạy lệnh.", 12f, Ui.TEXT);
         LinearLayout.LayoutParams subLp = new LinearLayout.LayoutParams(-1, -2);
         subLp.topMargin = Ui.dp(this, 4);
         col.addView(sub, subLp);
@@ -1100,9 +1100,9 @@ public class Main extends Activity {
                 "application/octet-stream", "application/zip", "application/x-zip-compressed", "*/*"});
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         try {
-            startActivityForResult(Intent.createChooser(intent, "Файл темы (.itz)"), REQ_PICK_ITZ);
+            startActivityForResult(Intent.createChooser(intent, "Tệp chủ đề (.itz)"), REQ_PICK_ITZ);
         } catch (Throwable t) {
-            toast("Проводник недоступен");
+            toast("Trình quản lý tệp không khả dụng");
         }
     }
 
@@ -1114,14 +1114,14 @@ public class Main extends Activity {
      */
     private void stageThemeFile(final Uri src) {
         if (staging) {
-            toast("Файл ещё готовится");
+            toast("Tệp đang được chuẩn bị");
             return;
         }
         staging = true;
         stagedPath = null;
         stagedMd5 = null;
-        themeFileText.setText("подготовка…");
-        themeStatus("Читаю файл…", Ui.MUTED);
+        themeFileText.setText("đang chuẩn bị…");
+        themeStatus("Đang đọc tệp…", Ui.MUTED);
         new Thread(new Runnable() {
             @Override public void run() {
                 try {
@@ -1163,7 +1163,7 @@ public class Main extends Activity {
                             }
                         }
                         if (staged == null) {
-                            throw firstErr != null ? firstErr : new Exception("копирование не удалось");
+                            throw firstErr != null ? firstErr : new Exception("sao chép thất bại");
                         }
                         // reading it back proves the reported path really holds the copy
                         md5 = md5File(new File(staged));
@@ -1184,20 +1184,20 @@ public class Main extends Activity {
                             if (n > 0) {
                                 // rename replaces the destination atomically (same dir)
                                 if (!tmp.renameTo(dst)) {
-                                    throw new Exception("не удалось записать " + dst.getName());
+                                    throw new Exception("không ghi được " + dst.getName());
                                 }
                                 path = dst.getAbsolutePath();
                                 md5 = md5File(dst);
-                                idNote = "id подменены: " + n + " → "
+                                idNote = "đã thay id: " + n + " → "
                                         + ThemePatcher.FREE_ID + "/" + ThemePatcher.FREE_UID;
                             } else {
                                 tmp.delete();
-                                idNote = "description.xml без id — файл не тронут";
+                                idNote = "description.xml không có id — không động đến tệp";
                             }
                         } catch (Throwable t) {
                             Log.e("GCTune", "id patch failed: " + t);
                             tmp.delete();
-                            idNote = "id НЕ подменены: " + t.getMessage();
+                            idNote = "KHÔNG thay được id: " + t.getMessage();
                         }
                     }
 
@@ -1212,7 +1212,7 @@ public class Main extends Activity {
                             stagedPath = fp;
                             stagedMd5 = fm;
                             themeFileText.setText(picked + " · " + sizeTxt + "\n" + fp);
-                            themeStatus("Файл готов, md5 " + fm + " — можно устанавливать"
+                            themeStatus("Tệp sẵn sàng, md5 " + fm + " — có thể cài đặt"
                                     + (idNoteF != null ? "\n" + idNoteF : ""), Ui.TEXT);
                         }
                     });
@@ -1222,8 +1222,8 @@ public class Main extends Activity {
                             staging = false;
                             stagedPath = null;
                             stagedMd5 = null;
-                            themeFileText.setText("файл не выбран");
-                            themeStatus("Ошибка подготовки: " + t.getMessage(), Ui.ERROR);
+                            themeFileText.setText("chưa chọn tệp");
+                            themeStatus("Lỗi chuẩn bị: " + t.getMessage(), Ui.ERROR);
                         }
                     });
                 }
@@ -1313,11 +1313,11 @@ public class Main extends Activity {
 
         stagedBytes = 0;
         InputStream in = r.openInputStream(src);
-        if (in == null) throw new Exception("источник недоступен");
+        if (in == null) throw new Exception("không truy cập được nguồn");
         OutputStream os = r.openOutputStream(out);
         if (os == null) {
             in.close();
-            throw new Exception("хранилище недоступно");
+            throw new Exception("không truy cập được bộ nhớ");
         }
         try {
             byte[] buf = new byte[64 * 1024];
@@ -1348,11 +1348,11 @@ public class Main extends Activity {
     /** Fallback: app-specific external dir (needs no permission on any API level). */
     private String copyToAppFiles(Uri src, String name) throws Exception {
         File dir = getExternalFilesDir(null);
-        if (dir == null) throw new Exception("нет внешнего хранилища");
+        if (dir == null) throw new Exception("không có bộ nhớ ngoài");
         File f = new File(dir, name);
 
         InputStream in = getContentResolver().openInputStream(src);
-        if (in == null) throw new Exception("источник недоступен");
+        if (in == null) throw new Exception("không truy cập được nguồn");
         OutputStream os = new FileOutputStream(f);
         stagedBytes = 0;
         try {
@@ -1372,33 +1372,33 @@ public class Main extends Activity {
 
     private static String humanSize(long bytes) {
         if (bytes >= 1048576L) {
-            return String.format(java.util.Locale.US, "%.1f МБ", bytes / 1048576.0);
+            return String.format(java.util.Locale.US, "%.1f MB", bytes / 1048576.0);
         }
-        if (bytes >= 1024L) return (bytes / 1024L) + " КБ";
-        return bytes + " Б";
+        if (bytes >= 1024L) return (bytes / 1024L) + " KB";
+        return bytes + " B";
     }
 
     // ---------------------------------------------------------- theme: install
     private void runThemeInstall() {
         if (busy) {
-            toast("Дождитесь текущей команды");
+            toast("Hãy đợi lệnh hiện tại hoàn tất");
             return;
         }
         if (staging) {
-            toast("Файл ещё готовится — подождите");
+            toast("Tệp đang được chuẩn bị — vui lòng đợi");
             return;
         }
         if (stagedPath == null || stagedPath.isEmpty()) {
-            toast("Сначала выберите .itz");
+            toast("Hãy chọn .itz trước");
             return;
         }
         themeRun = true;
-        themeStatus("Команда отправлена — откройте режим игры…", Ui.ACCENT);
+        themeStatus("Đã gửi lệnh — hãy mở chế độ game…", Ui.ACCENT);
         showHint();
         if (!apply(themeCommand())) {
             themeRun = false;
             hideHint();
-            themeStatus("GC Tune не в списке игр — добавьте приложение и повторите", Ui.ERROR);
+            themeStatus("GC Tune không có trong danh sách game — hãy thêm ứng dụng rồi thử lại", Ui.ERROR);
         }
     }
 
@@ -1474,27 +1474,27 @@ public class Main extends Activity {
         hideHint();
         String out = (ok && e != null && e.out != null) ? e.out : "";
         if (!ok) {
-            themeStatus("Нет ответа от uid 1000 — откройте режим игры и повторите", Ui.ERROR);
+            themeStatus("uid 1000 không phản hồi — hãy mở chế độ game rồi thử lại", Ui.ERROR);
         } else if (out.contains("SRC_UNREADABLE")) {
-            themeStatus("uid 1000 не может прочитать файл-источник", Ui.ERROR);
+            themeStatus("uid 1000 không đọc được tệp nguồn", Ui.ERROR);
         } else if (out.contains("SRC_STALE")) {
-            themeStatus("Источник не совпадает с выбранным файлом — повторите выбор", Ui.ERROR);
+            themeStatus("Nguồn không khớp với tệp đã chọn — hãy chọn lại", Ui.ERROR);
         } else if (out.contains("NO_THEME_FOUND")) {
-            themeStatus("В папке .../theme/.dwd/.../T нет ни одного .itz", Ui.ERROR);
+            themeStatus("Trong thư mục .../theme/.dwd/.../T không có tệp .itz nào", Ui.ERROR);
         } else if (out.contains("NO_PKG")) {
-            themeStatus("Пакет iTheme определить не удалось — подробности в консоли", Ui.ERROR);
+            themeStatus("Không xác định được gói iTheme — xem chi tiết trong console", Ui.ERROR);
         } else if (!out.contains("OK:")) {
-            themeStatus("Запись не удалась — вывод в консоли (вкладка Shell)", Ui.ERROR);
+            themeStatus("Ghi thất bại — xem kết quả trong console (tab Shell)", Ui.ERROR);
         } else {
             int n = countOccurrences(out, "OK:");
             int fails = countOccurrences(out, "FAIL:");
-            String base = "Заменено файлов: " + n + (fails > 0 ? ", ошибок: " + fails : "");
+            String base = "Số tệp đã thay: " + n + (fails > 0 ? ", lỗi: " + fails : "");
             if (out.contains("APP_FAILED")) {
-                themeStatus(base + " — iTheme не открылся, вывод в консоли", Ui.ERROR);
+                themeStatus(base + " — iTheme không mở được, xem kết quả trong console", Ui.ERROR);
             } else if (out.contains("APP_OPENED")) {
-                themeStatus(base + ", iTheme открыт — применяйте тему", Ui.ACCENT);
+                themeStatus(base + ", iTheme đã mở — hãy áp dụng chủ đề", Ui.ACCENT);
             } else {
-                themeStatus(base + " — подробности в консоли", Ui.TEXT);
+                themeStatus(base + " — xem chi tiết trong console", Ui.TEXT);
             }
         }
     }
@@ -1536,14 +1536,14 @@ public class Main extends Activity {
         root.setPadding(Ui.dp(this, 18), Ui.dp(this, 22), Ui.dp(this, 18), Ui.dp(this, 30));
         scroll.addView(root, new FrameLayout.LayoutParams(-1, -2));
 
-        TextView iconsTitle = Ui.label(this, "Иконки", 26f, Ui.TEXT);
-        root.addView(pageTitle(iconsTitle, "Перекраска и стилизация иконок"));
+        TextView iconsTitle = Ui.label(this, "Biểu tượng", 26f, Ui.TEXT);
+        root.addView(pageTitle(iconsTitle, "Đổi màu và tạo kiểu biểu tượng"));
 
         // ---- preview card
         LinearLayout previewCard = Ui.col(this);
         previewCard.setBackground(Ui.shape(this, Ui.SURFACE, 12f, Ui.BORDER_SOFT, 1f));
         previewCard.setPadding(Ui.dp(this, 14), Ui.dp(this, 14), Ui.dp(this, 14), Ui.dp(this, 14));
-        previewCard.addView(Ui.section(this, "Предпросмотр"));
+        previewCard.addView(Ui.section(this, "Xem trước"));
         iconsPreviewRow = new LinearLayout(this);
         iconsPreviewRow.setOrientation(LinearLayout.HORIZONTAL);
         LinearLayout.LayoutParams prevLp = new LinearLayout.LayoutParams(-1, -2);
@@ -1557,17 +1557,17 @@ public class Main extends Activity {
         LinearLayout srcCard = Ui.col(this);
         srcCard.setBackground(Ui.shape(this, Ui.SURFACE, 12f, Ui.BORDER_SOFT, 1f));
         srcCard.setPadding(Ui.dp(this, 14), Ui.dp(this, 14), Ui.dp(this, 14), Ui.dp(this, 14));
-        srcCard.addView(Ui.section(this, "Источник иконок"));
+        srcCard.addView(Ui.section(this, "Nguồn biểu tượng"));
 
         LinearLayout srcRow = new LinearLayout(this);
         srcRow.setOrientation(LinearLayout.HORIZONTAL);
         srcRow.setGravity(Gravity.CENTER_VERTICAL);
         LinearLayout.LayoutParams srcRowLp = new LinearLayout.LayoutParams(-1, -2);
         srcRowLp.topMargin = Ui.dp(this, 10);
-        iconsSourceValue = Ui.text(this, iconsPackPkg.isEmpty() ? "Системные иконки" : iconsPackLabel,
+        iconsSourceValue = Ui.text(this, iconsPackPkg.isEmpty() ? "Biểu tượng hệ thống" : iconsPackLabel,
                 14f, Ui.TEXT);
         srcRow.addView(iconsSourceValue, new LinearLayout.LayoutParams(0, -2, 1f));
-        View pickBtn = pillButton(M3Icons.folder(Ui.ACCENT, Ui.dp(this, 18)), "Пак",
+        View pickBtn = pillButton(M3Icons.folder(Ui.ACCENT, Ui.dp(this, 18)), "Gói",
                 new View.OnClickListener() {
                     @Override public void onClick(View v) { chooseIconPack(); }
                 });
@@ -1585,7 +1585,7 @@ public class Main extends Activity {
         LinearLayout colorCard = Ui.col(this);
         colorCard.setBackground(Ui.shape(this, Ui.SURFACE, 12f, Ui.BORDER_SOFT, 1f));
         colorCard.setPadding(Ui.dp(this, 14), Ui.dp(this, 14), Ui.dp(this, 14), Ui.dp(this, 14));
-        colorCard.addView(Ui.section(this, "Цвет перекраски"));
+        colorCard.addView(Ui.section(this, "Màu mới"));
 
         // Switch: Monet (Auto-extract colors from wallpaper) vs Manual
         LinearLayout monetRow = new LinearLayout(this);
@@ -1594,8 +1594,8 @@ public class Main extends Activity {
         LinearLayout.LayoutParams monetRowLp = new LinearLayout.LayoutParams(-1, -2);
         monetRowLp.topMargin = Ui.dp(this, 8);
         LinearLayout monetTextCol = Ui.col(this);
-        monetTextCol.addView(Ui.text(this, "Monet (цвета из обоев)", 14f, Ui.TEXT));
-        monetTextCol.addView(Ui.text(this, "Автоматически брать цвета темы из обоев", 11.5f, Ui.MUTED));
+        monetTextCol.addView(Ui.text(this, "Monet (màu theo hình nền)", 14f, Ui.TEXT));
+        monetTextCol.addView(Ui.text(this, "Tự lấy màu chủ đề từ hình nền", 11.5f, Ui.MUTED));
         monetRow.addView(monetTextCol, new LinearLayout.LayoutParams(0, -2, 1f));
 
         final MaterialSwitch monetSw = new MaterialSwitch(this);
@@ -1666,7 +1666,7 @@ public class Main extends Activity {
                 if (checked) {
                     int monet = getMonetPrimaryColor();
                     setIconsColor(monet);
-                    toast("Цвет взят из обоев (Monet)");
+                    toast("Đã lấy màu từ hình nền (Monet)");
                 }
                 saveIconsPrefs();
                 refreshIconsPreview();
@@ -1681,17 +1681,17 @@ public class Main extends Activity {
         LinearLayout tuneCard = Ui.col(this);
         tuneCard.setBackground(Ui.shape(this, Ui.SURFACE, 12f, Ui.BORDER_SOFT, 1f));
         tuneCard.setPadding(Ui.dp(this, 14), Ui.dp(this, 14), Ui.dp(this, 14), Ui.dp(this, 14));
-        tuneCard.addView(Ui.section(this, "Тонкая настройка"));
-        sbDesat = addSlider(tuneCard, "Обесцвечивание", iconsDesat, new IntSetter() {
+        tuneCard.addView(Ui.section(this, "Tinh chỉnh"));
+        sbDesat = addSlider(tuneCard, "Giảm bão hòa", iconsDesat, new IntSetter() {
             @Override public void set(int v) { iconsDesat = v; }
         });
-        sbLighten = addSlider(tuneCard, "Осветление", iconsLighten, new IntSetter() {
+        sbLighten = addSlider(tuneCard, "Làm sáng", iconsLighten, new IntSetter() {
             @Override public void set(int v) { iconsLighten = v; }
         });
-        sbStrength = addSlider(tuneCard, "Сила перекраски", iconsStrength, new IntSetter() {
+        sbStrength = addSlider(tuneCard, "Cường độ đổi màu", iconsStrength, new IntSetter() {
             @Override public void set(int v) { iconsStrength = v; }
         });
-        View resetBtn = pillButton(M3Icons.tune(Ui.TEXT, Ui.dp(this, 18)), "Сброс настроек",
+        View resetBtn = pillButton(M3Icons.tune(Ui.TEXT, Ui.dp(this, 18)), "Đặt lại cài đặt",
                 new View.OnClickListener() {
                     @Override public void onClick(View v) { resetIconsTuning(); }
                 });
@@ -1706,14 +1706,14 @@ public class Main extends Activity {
         LinearLayout styleCard = Ui.col(this);
         styleCard.setBackground(Ui.shape(this, Ui.SURFACE, 12f, Ui.BORDER_SOFT, 1f));
         styleCard.setPadding(Ui.dp(this, 14), Ui.dp(this, 14), Ui.dp(this, 14), Ui.dp(this, 14));
-        styleCard.addView(Ui.section(this, "Стиль: фон + иконка"));
+        styleCard.addView(Ui.section(this, "Kiểu: nền + biểu tượng"));
 
         LinearLayout switchRow = new LinearLayout(this);
         switchRow.setOrientation(LinearLayout.HORIZONTAL);
         switchRow.setGravity(Gravity.CENTER_VERTICAL);
         LinearLayout.LayoutParams switchLp = new LinearLayout.LayoutParams(-1, -2);
         switchLp.topMargin = Ui.dp(this, 8);
-        TextView switchLabel = Ui.text(this, "Разделять на слои (как IconPack Studio)", 14f, Ui.TEXT);
+        TextView switchLabel = Ui.text(this, "Tách lớp (như IconPack Studio)", 14f, Ui.TEXT);
         switchRow.addView(switchLabel, new LinearLayout.LayoutParams(0, -2, 1f));
         final MaterialSwitch sw = new MaterialSwitch(this);
         sw.setChecked(iconsBgEnabled);
@@ -1734,7 +1734,7 @@ public class Main extends Activity {
         bgRow.setGravity(Gravity.CENTER_VERTICAL);
         LinearLayout.LayoutParams bgRowLp = new LinearLayout.LayoutParams(-1, -2);
         bgRowLp.topMargin = Ui.dp(this, 10);
-        bgRow.addView(Ui.text(this, "Цвет фона:", 13f, Ui.MUTED));
+        bgRow.addView(Ui.text(this, "Màu nền:", 13f, Ui.MUTED));
         String[] bgPresets = {"#FFFFFF", "#F5F5F5", "#212121", "#000000", "#3D7D56", "#1E88E5"};
         for (String hex : bgPresets) {
             final int color = parseColor(hex);
@@ -1770,7 +1770,7 @@ public class Main extends Activity {
         });
         styleCard.addView(bgRow, bgRowLp);
 
-        sbIconScale = addSlider(styleCard, "Размер иконки", 40, 160, iconsScale, new IntSetter() {
+        sbIconScale = addSlider(styleCard, "Kích thước biểu tượng", 40, 160, iconsScale, new IntSetter() {
             @Override public void set(int v) { iconsScale = v; }
         });
 
@@ -1780,19 +1780,19 @@ public class Main extends Activity {
         shapeHead.setGravity(Gravity.CENTER_VERTICAL);
         LinearLayout.LayoutParams shLp = new LinearLayout.LayoutParams(-1, -2);
         shLp.topMargin = Ui.dp(this, 14);
-        shapeHead.addView(Ui.section(this, "Форма иконки"), new LinearLayout.LayoutParams(0, -2, 1f));
+        shapeHead.addView(Ui.section(this, "Hình dạng biểu tượng"), new LinearLayout.LayoutParams(0, -2, 1f));
         styleCard.addView(shapeHead, shLp);
 
         final String[] shapeNames = {
-                "Круг (Circle)", "Квадрат (Square)", "Скошенный (Slanted Square)", "Арка (Arch)",
-                "Веер (Fan)", "Стрелка (Arrow)", "Полукруг (Semi-Circle)", "Овал (Oval)",
-                "Капсула (Pill)", "Треугольник (Triangle)", "Ромб (Diamond)", "Ракушка (Clam Shell)",
-                "Пятигранник (Pentagon)", "Кристалл (Gem)", "Солнце (Sunny)", "Яркое солнце (Very Sunny)",
-                "Печенье 4 (Cookie 4)", "Печенье 6 (Cookie 6)", "Печенье 7 (Cookie 7)", "Печенье 9 (Cookie 9)",
-                "Печенье 12 (Cookie 12)", "Привидение (Ghostish)", "Клевер 4 (Clover 4)", "Клевер 8 (Clover 8)",
-                "Вспышка (Burst)", "Мягкая вспышка (Soft Burst)", "Взрыв (Boom)", "Мягкий взрыв (Soft Boom)",
-                "Цветок (Flower)", "Облачко (Puffy)", "Пышный ромб (Puffy Diamond)", "Пиксельный круг (Pixel Circle)",
-                "Пиксельный треугольник (Pixel Triangle)", "Булочка (Bun)", "Сердце (Heart)"
+                "Tròn (Circle)", "Vuông (Square)", "Vuông xiên (Slanted Square)", "Vòm (Arch)",
+                "Quạt (Fan)", "Mũi tên (Arrow)", "Bán nguyệt (Semi-Circle)", "Bầu dục (Oval)",
+                "Viên thuốc (Pill)", "Tam giác (Triangle)", "Thoi (Diamond)", "Vỏ sò (Clam Shell)",
+                "Ngũ giác (Pentagon)", "Pha lê (Gem)", "Mặt trời (Sunny)", "Mặt trời rực rỡ (Very Sunny)",
+                "Bánh quy 4 (Cookie 4)", "Bánh quy 6 (Cookie 6)", "Bánh quy 7 (Cookie 7)", "Bánh quy 9 (Cookie 9)",
+                "Bánh quy 12 (Cookie 12)", "Bóng ma (Ghostish)", "Cỏ 4 lá (Clover 4)", "Cỏ 8 lá (Clover 8)",
+                "Tia lóe (Burst)", "Tia lóe mềm (Soft Burst)", "Vụ nổ (Boom)", "Vụ nổ mềm (Soft Boom)",
+                "Hoa (Flower)", "Đám mây (Puffy)", "Thoi phồng (Puffy Diamond)", "Tròn pixel (Pixel Circle)",
+                "Tam giác pixel (Pixel Triangle)", "Bánh bao (Bun)", "Trái tim (Heart)"
         };
         final int[] shapeIds = {
                 IconsTinter.SHAPE_M3_CIRCLE, IconsTinter.SHAPE_M3_SQUARE, IconsTinter.SHAPE_M3_SLANTED_SQUARE, IconsTinter.SHAPE_M3_ARCH,
@@ -1820,7 +1820,7 @@ public class Main extends Activity {
 
         final LinearLayout shapeInfo = Ui.col(this);
         shapeInfo.setPadding(Ui.dp(this, 12), 0, Ui.dp(this, 8), 0);
-        String initialShapeName = "Закругленный";
+        String initialShapeName = "Bo tròn";
         for (int i = 0; i < shapeIds.length; i++) {
             if (shapeIds[i] == iconsShape) {
                 initialShapeName = shapeNames[i];
@@ -1829,7 +1829,7 @@ public class Main extends Activity {
         }
         final TextView currentShapeTitle = Ui.text(this, initialShapeName, 14f, Ui.TEXT);
         currentShapeTitle.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL));
-        final TextView shapeSub = Ui.text(this, "35 официальных Material 3 форм · Нажмите для выбора", 11.5f, Ui.MUTED);
+        final TextView shapeSub = Ui.text(this, "35 hình dạng Material 3 chính thức · Nhấn để chọn", 11.5f, Ui.MUTED);
         shapeInfo.addView(currentShapeTitle);
         shapeInfo.addView(shapeSub);
         shapePickerBtn.addView(shapeInfo, new LinearLayout.LayoutParams(0, -2, 1f));
@@ -1848,9 +1848,9 @@ public class Main extends Activity {
                 dlgScroll.addView(grid, new FrameLayout.LayoutParams(-1, -2));
 
                 final AlertDialog dialog = new AlertDialog.Builder(Main.this)
-                        .setTitle("Выберите форму (Material 3 Expressive)")
+                        .setTitle("Chọn hình dạng (Material 3 Expressive)")
                         .setView(dlgScroll)
-                        .setNegativeButton("Закрыть", null)
+                        .setNegativeButton("Đóng", null)
                         .create();
 
                 int itemThumbSize = Ui.dp(Main.this, 38);
@@ -1913,7 +1913,7 @@ public class Main extends Activity {
 
         // ---- apply button
         View apply = pillButton(M3Icons.play(Ui.ACCENT, Ui.dp(this, 18)),
-                "Перекрасить и применить",
+                "Đổi màu và áp dụng",
                 new View.OnClickListener() {
                     @Override public void onClick(View v) { runIconsApply(); }
                 });
@@ -1925,14 +1925,14 @@ public class Main extends Activity {
         LinearLayout statusCard = Ui.col(this);
         statusCard.setBackground(Ui.shape(this, Ui.INPUT_BG, 12f, Ui.BORDER, 1.2f));
         statusCard.setPadding(Ui.dp(this, 14), Ui.dp(this, 12), Ui.dp(this, 14), Ui.dp(this, 12));
-        iconsStatusText = Ui.text(this, "Выберите цвет и нажмите «Перекрасить»", 13f, Ui.MUTED);
+        iconsStatusText = Ui.text(this, "Chọn màu rồi nhấn «Đổi màu»", 13f, Ui.MUTED);
         statusCard.addView(iconsStatusText);
         LinearLayout.LayoutParams statusLp = new LinearLayout.LayoutParams(-1, -2);
         statusLp.bottomMargin = Ui.dp(this, 14);
         root.addView(statusCard, statusLp);
 
         TextView note = Ui.text(this,
-                "Паки ADW/Nova импортируются. Применение — при открытом режиме игры.",
+                "Hỗ trợ nhập gói ADW/Nova. Chỉ áp dụng khi chế độ game đang mở.",
                 11.5f, Ui.MUTED);
         root.addView(note);
 
@@ -2051,7 +2051,7 @@ public class Main extends Activity {
         iconsFgScale = 76;
         iconsRadius = 25;
         iconsShape = IconsTinter.SHAPE_ROUNDED;
-        toast("Настройки сброшены");
+        toast("Đã đặt lại cài đặt");
         saveIconsPrefs();
         refreshIconsPreview();
     }
@@ -2071,21 +2071,21 @@ public class Main extends Activity {
 
     /** Discovers installed icon packs (ADW/Nova intents) and shows a chooser. */
     private void chooseIconPack() {
-        toast("Ищу иконокпаки…");
+        toast("Đang tìm gói biểu tượng…");
         new Thread(new Runnable() {
             @Override public void run() {
                 final List<IconPackLoader.Pack> packs = packLoader().findPacks();
                 h.post(new Runnable() {
                     @Override public void run() {
                         if (packs.isEmpty()) {
-                            toast("Иконокпаки не найдены — установите любой пак с Play Market");
+                            toast("Không tìm thấy gói biểu tượng — hãy cài một gói bất kỳ từ Google Play");
                             return;
                         }
                         CharSequence[] items = new CharSequence[packs.size() + 1];
-                        items[0] = "Системные иконки (без пака)";
+                        items[0] = "Biểu tượng hệ thống (không dùng gói)";
                         for (int i = 0; i < packs.size(); i++) items[i + 1] = packs.get(i).label;
                         new AlertDialog.Builder(Main.this)
-                                .setTitle("Иконокпак")
+                                .setTitle("Gói biểu tượng")
                                 .setItems(items, new DialogInterface.OnClickListener() {
                                     @Override public void onClick(DialogInterface d, int w) {
                                         if (w == 0) {
@@ -2096,7 +2096,7 @@ public class Main extends Activity {
                                         }
                                     }
                                 })
-                                .setNegativeButton("Отмена", null)
+                                .setNegativeButton("Hủy", null)
                                 .show();
                     }
                 });
@@ -2109,23 +2109,23 @@ public class Main extends Activity {
         iconsPackLabel = label;
         saveIconsPrefs();
         if (iconsSourceValue != null) {
-            iconsSourceValue.setText(pkg.isEmpty() ? "Системные иконки" : label);
+            iconsSourceValue.setText(pkg.isEmpty() ? "Biểu tượng hệ thống" : label);
         }
         if (pkg.isEmpty()) {
-            iconsStatus("Источник: системные иконки", Ui.ACCENT);
+            iconsStatus("Nguồn: biểu tượng hệ thống", Ui.ACCENT);
             refreshIconsPreview();
             return;
         }
-        iconsStatus("Загружаю «" + label + "»…", Ui.ACCENT);
+        iconsStatus("Đang tải «" + label + "»…", Ui.ACCENT);
         new Thread(new Runnable() {
             @Override public void run() {
                 final int n = packLoader().load(pkg);
                 h.post(new Runnable() {
                     @Override public void run() {
                         if (n > 0) {
-                            iconsStatus("Пак загружен: " + n + " иконок в маппинге", Ui.ACCENT);
+                            iconsStatus("Đã tải gói: " + n + " biểu tượng trong ánh xạ", Ui.ACCENT);
                         } else {
-                            iconsStatus("Пак не поддерживается (нет appfilter.xml)", Ui.ERROR);
+                            iconsStatus("Gói không được hỗ trợ (không có appfilter.xml)", Ui.ERROR);
                         }
                         refreshIconsPreview();
                     }
@@ -2216,21 +2216,21 @@ public class Main extends Activity {
 
     private void runIconsApply() {
         if (busy) {
-            toast("Дождитесь текущей команды");
+            toast("Hãy đợi lệnh hiện tại hoàn tất");
             return;
         }
         if (iconsPackages.isEmpty()) {
             loadLauncherApps();
         }
         if (iconsPackages.isEmpty()) {
-            iconsStatus("Не удалось получить список приложений", Ui.ERROR);
+            iconsStatus("Không lấy được danh sách ứng dụng", Ui.ERROR);
             return;
         }
         iconsRun = true;
         busy = true;
         // persist the whole recipe
         saveIconsPrefs();
-        iconsStatus("Перекрашиваю иконки…", Ui.ACCENT);
+        iconsStatus("Đang đổi màu biểu tượng…", Ui.ACCENT);
         showHint();
         final int total = iconsPackages.size();
         new Thread(new Runnable() {
@@ -2276,7 +2276,7 @@ public class Main extends Activity {
                         final int d = done;
                         h.post(new Runnable() {
                             @Override public void run() {
-                                iconsStatus("Перекрашено " + d + " / " + total, Ui.ACCENT);
+                                iconsStatus("Đã đổi màu " + d + " / " + total, Ui.ACCENT);
                             }
                         });
                     }
@@ -2342,14 +2342,14 @@ public class Main extends Activity {
                 final int ferr = failed;
                 h.post(new Runnable() {
                     @Override public void run() {
-                        iconsStatus("Отрисовано " + fin + " из " + total
-                                + (ferr > 0 ? " (ошибок: " + ferr + ")" : "")
-                                + " — ставлю через канал…", Ui.ACCENT);
+                        iconsStatus("Đã vẽ " + fin + " trên " + total
+                                + (ferr > 0 ? " (lỗi: " + ferr + ")" : "")
+                                + " — đang cài qua kênh…", Ui.ACCENT);
                         busy = false;
                         if (!apply(iconsCommand())) {
                             iconsRun = false;
                             hideHint();
-                            iconsStatus("GC Tune не в списке игр — добавьте приложение и повторите", Ui.ERROR);
+                            iconsStatus("GC Tune không có trong danh sách game — hãy thêm ứng dụng rồi thử lại", Ui.ERROR);
                         }
                     }
                 });
@@ -2524,11 +2524,11 @@ public class Main extends Activity {
         hideHint();
         String out = (ok && e != null && e.out != null) ? e.out : "";
         if (!ok) {
-            iconsStatus("Нет ответа от uid 1000 — откройте режим игры и повторите", Ui.ERROR);
+            iconsStatus("uid 1000 không phản hồi — hãy mở chế độ game rồi thử lại", Ui.ERROR);
         } else if (out.contains("NO_ICONS")) {
-            iconsStatus("Нет перекрашенных иконок — повторите", Ui.ERROR);
+            iconsStatus("Chưa có biểu tượng nào được đổi màu — hãy thử lại", Ui.ERROR);
         } else if (out.contains("BUSY")) {
-            iconsStatus("Предыдущая установка ещё идёт — подождите и повторите", Ui.ERROR);
+            iconsStatus("Lần cài trước vẫn đang chạy — hãy đợi rồi thử lại", Ui.ERROR);
         } else if (out.contains("APPLIED")) {
             String n = "";
             int i = out.indexOf("APPLIED_ICONS=");
@@ -2539,13 +2539,13 @@ public class Main extends Activity {
                     if (c < '0' || c > '9') break;
                     sb.append(c);
                 }
-                if (sb.length() > 0) n = " (" + sb + " иконок)";
+                if (sb.length() > 0) n = " (" + sb + " biểu tượng)";
             }
-            iconsStatus("Иконки применены" + n + " — проверьте лаунчер"
-                    + (styleToggleOk ? "" : " (стиль не переключился: нет WRITE_SECURE_SETTINGS)"),
+            iconsStatus("Đã áp dụng biểu tượng" + n + " — hãy kiểm tra launcher"
+                    + (styleToggleOk ? "" : " (chưa chuyển được kiểu: thiếu WRITE_SECURE_SETTINGS)"),
                     Ui.ACCENT);
         } else {
-            iconsStatus("Подробности в консоли (вкладка Shell)", Ui.TEXT);
+            iconsStatus("Xem chi tiết trong console (tab Shell)", Ui.TEXT);
         }
     }
 
@@ -2559,8 +2559,8 @@ public class Main extends Activity {
         root.setPadding(Ui.dp(this, 18), Ui.dp(this, 22), Ui.dp(this, 18), Ui.dp(this, 30));
         scroll.addView(root, new FrameLayout.LayoutParams(-1, -2));
 
-        TextView title = Ui.label(this, "Настройки", 28f, Ui.TEXT);
-        root.addView(pageTitle(title, "Канал и параметры приложения"));
+        TextView title = Ui.label(this, "Cài đặt", 28f, Ui.TEXT);
+        root.addView(pageTitle(title, "Kênh và tham số ứng dụng"));
 
         // Expressive Card Container for settings options
         LinearLayout card = Ui.col(this);
@@ -2571,7 +2571,7 @@ public class Main extends Activity {
         card.addView(settingsDivider());
         card.addView(settingsTimeoutRow());
         card.addView(settingsDivider());
-        card.addView(settingsNavRow("Поддерживаемые игры", new View.OnClickListener() {
+        card.addView(settingsNavRow("Game được hỗ trợ", new View.OnClickListener() {
             @Override public void onClick(View v) {
                 try {
                     startActivity(SetupActivity.gameSettingsIntent());
@@ -2581,7 +2581,7 @@ public class Main extends Activity {
             }
         }));
         card.addView(settingsDivider());
-        card.addView(settingsNavRow("Первичная настройка", new View.OnClickListener() {
+        card.addView(settingsNavRow("Thiết lập ban đầu", new View.OnClickListener() {
             @Override public void onClick(View v) {
                 prefs.edit().putBoolean("setup_done", false).apply();
                 startActivity(new Intent(Main.this, SetupActivity.class));
@@ -2590,7 +2590,7 @@ public class Main extends Activity {
 
         root.addView(card, new LinearLayout.LayoutParams(-1, -2));
 
-        TextView about = Ui.text(this, "GC Tune 1.0 · канал Game Cube", 12f, Ui.MUTED);
+        TextView about = Ui.text(this, "GC Tune 1.0 · kênh Game Cube", 12f, Ui.MUTED);
         about.setGravity(Gravity.CENTER);
         LinearLayout.LayoutParams aboutLp = new LinearLayout.LayoutParams(-2, -2);
         aboutLp.gravity = Gravity.CENTER_HORIZONTAL;
@@ -2601,7 +2601,7 @@ public class Main extends Activity {
 
     private View settingsSwitchRow() {
         LinearLayout row = settingsRowBase();
-        row.addView(Ui.text(this, "Требовать статус игры", 14f, Ui.TEXT),
+        row.addView(Ui.text(this, "Yêu cầu trạng thái game", 14f, Ui.TEXT),
                 new LinearLayout.LayoutParams(0, -2, 1f));
 
         MaterialSwitch sw = new MaterialSwitch(this);
@@ -2624,7 +2624,7 @@ public class Main extends Activity {
 
     private View settingsTimeoutRow() {
         LinearLayout row = settingsRowBase();
-        row.addView(Ui.text(this, "Таймаут, сек", 14f, Ui.TEXT),
+        row.addView(Ui.text(this, "Thời gian chờ, giây", 14f, Ui.TEXT),
                 new LinearLayout.LayoutParams(0, -2, 1f));
 
         settingsTimeout = new EditText(this);
@@ -2708,19 +2708,19 @@ public class Main extends Activity {
         root.setPadding(Ui.dp(this, 18), Ui.dp(this, 22), Ui.dp(this, 18), Ui.dp(this, 30));
         scroll.addView(root, new FrameLayout.LayoutParams(-1, -2));
 
-        root.addView(pageTitle(Ui.label(this, "Кастомизация", 26f, Ui.TEXT),
-                "Тема, иконки и фон"));
+        root.addView(pageTitle(Ui.label(this, "Tùy biến", 26f, Ui.TEXT),
+                "Chủ đề, biểu tượng và nền"));
 
         root.addView(customBlock(M3Icons.palette(Ui.ACCENT, Ui.dp(this, 24)),
-                "Тема", "Установка .itz", ThemeActivity.class));
+                "Chủ đề", "Cài đặt .itz", ThemeActivity.class));
         root.addView(customBlock(M3Icons.tune(Ui.ACCENT, Ui.dp(this, 24)),
-                "Системные Настройки", "Перекраска акцента и Monet", SettingsThemeActivity.class));
+                "Cài đặt hệ thống", "Đổi màu nhấn và Monet", SettingsThemeActivity.class));
         root.addView(customBlock(M3Icons.grid(Ui.ACCENT, Ui.dp(this, 24)),
-                "Иконки", "Перекраска и паки", IconsActivity.class));
+                "Biểu tượng", "Đổi màu và gói biểu tượng", IconsActivity.class));
         root.addView(customBlock(M3Icons.font(Ui.ACCENT, Ui.dp(this, 24)),
-                "Шрифты", "Системные шрифты", FontActivity.class));
+                "Phông chữ", "Phông chữ hệ thống", FontActivity.class));
         root.addView(customBlock(M3Icons.shield(Ui.ACCENT, Ui.dp(this, 24)),
-                "Прочее", "Защита фона и ADB-мост", MiscActivity.class));
+                "Khác", "Bảo vệ nền và cầu ADB", MiscActivity.class));
         return scroll;
     }
 
@@ -2785,8 +2785,8 @@ public class Main extends Activity {
         root.setPadding(Ui.dp(this, 18), Ui.dp(this, 22), Ui.dp(this, 18), Ui.dp(this, 30));
         scroll.addView(root, new FrameLayout.LayoutParams(-1, -2));
 
-        TextView title = Ui.label(this, "Шрифты", 26f, Ui.TEXT);
-        root.addView(pageTitle(title, "Замена TTF в /data/vfonts"));
+        TextView title = Ui.label(this, "Phông chữ", 26f, Ui.TEXT);
+        root.addView(pageTitle(title, "Thay TTF trong /data/vfonts"));
 
         fontThemeHint = hintCard();
         fontThemeHint.setVisibility(View.GONE);
@@ -2798,14 +2798,14 @@ public class Main extends Activity {
         LinearLayout fileCard = Ui.col(this);
         fileCard.setBackground(Ui.shape(this, Ui.SURFACE, 12f, Ui.BORDER_SOFT, 1f));
         fileCard.setPadding(Ui.dp(this, 14), Ui.dp(this, 14), Ui.dp(this, 14), Ui.dp(this, 14));
-        fileCard.addView(Ui.section(this, "Файл шрифта (.ttf)"));
+        fileCard.addView(Ui.section(this, "Tệp phông chữ (.ttf)"));
 
-        fontThemeFileText = Ui.text(this, "файл не выбран", 14f, Ui.TEXT);
+        fontThemeFileText = Ui.text(this, "chưa chọn tệp", 14f, Ui.TEXT);
         LinearLayout.LayoutParams fileLp = new LinearLayout.LayoutParams(-2, -2);
         fileLp.topMargin = Ui.dp(this, 8);
         fileCard.addView(fontThemeFileText, fileLp);
 
-        View choose = pillButton(M3Icons.folder(Ui.ACCENT, Ui.dp(this, 18)), "Выбрать .ttf",
+        View choose = pillButton(M3Icons.folder(Ui.ACCENT, Ui.dp(this, 18)), "Chọn .ttf",
                 new View.OnClickListener() {
                     @Override public void onClick(View v) { pickFontFile(); }
                 });
@@ -2819,7 +2819,7 @@ public class Main extends Activity {
 
         // ---- install button
         View install = pillButton(M3Icons.play(Ui.ACCENT, Ui.dp(this, 18)),
-                "Установить и открыть iTheme",
+                "Cài đặt và mở iTheme",
                 new View.OnClickListener() {
                     @Override public void onClick(View v) { runFontInstall(); }
                 });
@@ -2832,14 +2832,14 @@ public class Main extends Activity {
         LinearLayout statusCard = Ui.col(this);
         statusCard.setBackground(Ui.shape(this, Ui.INPUT_BG, 12f, Ui.BORDER, 1.2f));
         statusCard.setPadding(Ui.dp(this, 14), Ui.dp(this, 12), Ui.dp(this, 14), Ui.dp(this, 12));
-        fontThemeStatusText = Ui.text(this, "Выберите .ttf и нажмите «Установить»", 13f, Ui.MUTED);
+        fontThemeStatusText = Ui.text(this, "Chọn .ttf rồi nhấn «Cài đặt»", 13f, Ui.MUTED);
         statusCard.addView(fontThemeStatusText);
         LinearLayout.LayoutParams statusLp = new LinearLayout.LayoutParams(-1, -2);
         statusLp.bottomMargin = Ui.dp(this, 14);
         root.addView(statusCard, statusLp);
 
         TextView note = Ui.text(this,
-                "Копия — в Download/gctune. Перед заменой создаются бэкапы .bak.", 11.5f, Ui.MUTED);
+                "Bản sao nằm trong Download/gctune. Trước khi thay sẽ tạo bản sao lưu .bak.", 11.5f, Ui.MUTED);
         LinearLayout.LayoutParams noteLp = new LinearLayout.LayoutParams(-1, -2);
         noteLp.bottomMargin = Ui.dp(this, 24);
         root.addView(note, noteLp);
@@ -2863,8 +2863,8 @@ public class Main extends Activity {
         root.setPadding(Ui.dp(this, 18), Ui.dp(this, 22), Ui.dp(this, 18), Ui.dp(this, 30));
         scroll.addView(root, new FrameLayout.LayoutParams(-1, -2));
 
-        TextView title = Ui.label(this, "Системные Настройки", 26f, Ui.TEXT);
-        root.addView(pageTitle(title, "Перекраска акцентов и переключателей"));
+        TextView title = Ui.label(this, "Cài đặt hệ thống", 26f, Ui.TEXT);
+        root.addView(pageTitle(title, "Đổi màu nhấn và công tắc"));
 
         stHint = hintCard();
         stHint.setVisibility(View.GONE);
@@ -2876,7 +2876,7 @@ public class Main extends Activity {
         LinearLayout prevCard = Ui.col(this);
         prevCard.setBackground(Ui.shape(this, Ui.SURFACE, 12f, Ui.BORDER_SOFT, 1f));
         prevCard.setPadding(Ui.dp(this, 14), Ui.dp(this, 14), Ui.dp(this, 14), Ui.dp(this, 14));
-        prevCard.addView(Ui.section(this, "Предпросмотр акцента Настроек"));
+        prevCard.addView(Ui.section(this, "Xem trước màu nhấn của Cài đặt"));
 
         LinearLayout prevRow = new LinearLayout(this);
         prevRow.setOrientation(LinearLayout.HORIZONTAL);
@@ -2892,7 +2892,7 @@ public class Main extends Activity {
         prevTextCol.setPadding(Ui.dp(this, 12), 0, Ui.dp(this, 8), 0);
         stPreviewAccentText = Ui.text(this, String.format("#%06X", stColor & 0xFFFFFF), 15f, stColor);
         stPreviewAccentText.setTypeface(Typeface.create("sans-serif-medium", Typeface.NORMAL));
-        TextView prevSub = Ui.text(this, "Акцент тумблеров, кнопок и ползунков в Настройках", 11.5f, Ui.MUTED);
+        TextView prevSub = Ui.text(this, "Màu nhấn của công tắc, nút và thanh trượt trong Cài đặt", 11.5f, Ui.MUTED);
         prevTextCol.addView(stPreviewAccentText);
         prevTextCol.addView(prevSub);
         prevRow.addView(prevTextCol, new LinearLayout.LayoutParams(0, -2, 1f));
@@ -2911,7 +2911,7 @@ public class Main extends Activity {
         LinearLayout modeCard = Ui.col(this);
         modeCard.setBackground(Ui.shape(this, Ui.SURFACE, 12f, Ui.BORDER_SOFT, 1f));
         modeCard.setPadding(Ui.dp(this, 14), Ui.dp(this, 14), Ui.dp(this, 14), Ui.dp(this, 14));
-        modeCard.addView(Ui.section(this, "Режим цвета"));
+        modeCard.addView(Ui.section(this, "Chế độ màu"));
 
         LinearLayout monetRow = new LinearLayout(this);
         monetRow.setOrientation(LinearLayout.HORIZONTAL);
@@ -2920,8 +2920,8 @@ public class Main extends Activity {
         monetRowLp.topMargin = Ui.dp(this, 8);
 
         LinearLayout monetTextCol = Ui.col(this);
-        monetTextCol.addView(Ui.text(this, "Monet (цвета из обоев)", 14f, Ui.TEXT));
-        monetTextCol.addView(Ui.text(this, "Автоматически брать акцент из текущих обоев", 11.5f, Ui.MUTED));
+        monetTextCol.addView(Ui.text(this, "Monet (màu theo hình nền)", 14f, Ui.TEXT));
+        monetTextCol.addView(Ui.text(this, "Tự lấy màu nhấn từ hình nền hiện tại", 11.5f, Ui.MUTED));
         monetRow.addView(monetTextCol, new LinearLayout.LayoutParams(0, -2, 1f));
 
         final MaterialSwitch stMonetSw = new MaterialSwitch(this);
@@ -2993,7 +2993,7 @@ public class Main extends Activity {
                 stManualBox.setVisibility(checked ? View.GONE : View.VISIBLE);
                 if (checked) {
                     setSettingsThemeColor(getMonetPrimaryColor());
-                    toast("Акцент взят из обоев (Monet)");
+                    toast("Đã lấy màu nhấn từ hình nền (Monet)");
                 }
                 saveSettingsThemePrefs();
             }
@@ -3005,7 +3005,7 @@ public class Main extends Activity {
 
         // ---- apply button
         View apply = pillButton(M3Icons.play(Ui.ACCENT, Ui.dp(this, 18)),
-                "Перекрасить Настройки",
+                "Đổi màu Cài đặt",
                 new View.OnClickListener() {
                     @Override public void onClick(View v) { runSettingsThemeApply(); }
                 });
@@ -3017,14 +3017,14 @@ public class Main extends Activity {
         LinearLayout statusCard = Ui.col(this);
         statusCard.setBackground(Ui.shape(this, Ui.INPUT_BG, 12f, Ui.BORDER, 1.2f));
         statusCard.setPadding(Ui.dp(this, 14), Ui.dp(this, 12), Ui.dp(this, 14), Ui.dp(this, 12));
-        stStatusText = Ui.text(this, "Выберите режим цвета и нажмите «Перекрасить Настройки»", 13f, Ui.MUTED);
+        stStatusText = Ui.text(this, "Chọn chế độ màu rồi nhấn «Đổi màu Cài đặt»", 13f, Ui.MUTED);
         statusCard.addView(stStatusText);
         LinearLayout.LayoutParams statusLp = new LinearLayout.LayoutParams(-1, -2);
         statusLp.bottomMargin = Ui.dp(this, 14);
         root.addView(statusCard, statusLp);
 
         TextView note = Ui.text(this,
-                "Генерирует системный акцент через Fabricated Overlay и тему OriginOS. Требуется режим игры.",
+                "Tạo màu nhấn hệ thống qua Fabricated Overlay và chủ đề OriginOS. Cần mở chế độ game.",
                 11.5f, Ui.MUTED);
         LinearLayout.LayoutParams noteLp = new LinearLayout.LayoutParams(-1, -2);
         noteLp.bottomMargin = Ui.dp(this, 24);
@@ -3072,18 +3072,18 @@ public class Main extends Activity {
 
     private void runSettingsThemeApply() {
         if (busy) {
-            toast("Дождитесь текущей команды");
+            toast("Hãy đợi lệnh hiện tại hoàn tất");
             return;
         }
         saveSettingsThemePrefs();
         stRun = true;
-        stStatus("Применяю акцент к системным Настройкам…", Ui.ACCENT);
+        stStatus("Đang áp dụng màu nhấn cho Cài đặt hệ thống…", Ui.ACCENT);
         showStHint();
         String cmd = settingsThemeCommand();
         if (!apply(cmd)) {
             stRun = false;
             hideStHint();
-            stStatus("GC Tune не в списке игр — добавьте приложение и повторите", Ui.ERROR);
+            stStatus("GC Tune không có trong danh sách game — hãy thêm ứng dụng rồi thử lại", Ui.ERROR);
         }
     }
 
@@ -3147,12 +3147,12 @@ public class Main extends Activity {
         hideStHint();
         String out = (ok && e != null && e.out != null) ? e.out : "";
         if (!ok) {
-            stStatus("Нет ответа от uid 1000 — откройте режим игры и повторите", Ui.ERROR);
+            stStatus("uid 1000 không phản hồi — hãy mở chế độ game rồi thử lại", Ui.ERROR);
         } else if (out.contains("SETTINGS_APPLIED")) {
-            stStatus("Акцент применен к Настройкам! Настройки перезапущены.", Ui.ACCENT);
-            toast("Настройки перекрашены!");
+            stStatus("Đã áp dụng màu nhấn cho Cài đặt! Cài đặt đã được khởi động lại.", Ui.ACCENT);
+            toast("Đã đổi màu Cài đặt!");
         } else {
-            stStatus("Команда выполнена — проверьте системные Настройки", Ui.TEXT);
+            stStatus("Lệnh đã chạy xong — hãy kiểm tra Cài đặt hệ thống", Ui.TEXT);
         }
     }
 
@@ -3163,9 +3163,9 @@ public class Main extends Activity {
                 "application/octet-stream", "font/ttf", "application/x-font-ttf", "*/*"});
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         try {
-            startActivityForResult(Intent.createChooser(intent, "Файл шрифта (.ttf)"), REQ_PICK_FONT);
+            startActivityForResult(Intent.createChooser(intent, "Tệp phông chữ (.ttf)"), REQ_PICK_FONT);
         } catch (Throwable t) {
-            toast("Проводник недоступен");
+            toast("Trình quản lý tệp không khả dụng");
         }
     }
 
@@ -3199,25 +3199,25 @@ public class Main extends Activity {
 
     private void runFontInstall() {
         if (busy) {
-            toast("Дождитесь текущей команды");
+            toast("Hãy đợi lệnh hiện tại hoàn tất");
             return;
         }
         if (fontStaging) {
-            toast("Файл ещё готовится — подождите");
+            toast("Tệp đang được chuẩn bị — vui lòng đợi");
             return;
         }
         if (fontStagedPath == null || fontStagedPath.isEmpty()) {
-            toast("Сначала выберите .ttf");
+            toast("Hãy chọn .ttf trước");
             return;
         }
         fontThemeRun = true;
-        fontStatus("Команда отправлена — откройте режим игры…", Ui.ACCENT);
+        fontStatus("Đã gửi lệnh — hãy mở chế độ game…", Ui.ACCENT);
         showFontHint();
         String cmd = fontCommand();
         if (!apply(cmd)) {
             fontThemeRun = false;
             hideFontHint();
-            fontStatus("GC Tune не в списке игр — добавьте приложение и повторите", Ui.ERROR);
+            fontStatus("GC Tune không có trong danh sách game — hãy thêm ứng dụng rồi thử lại", Ui.ERROR);
         }
     }
 
@@ -3231,30 +3231,30 @@ public class Main extends Activity {
         hideFontHint();
         String out = (ok && e != null && e.out != null) ? e.out : "";
         if (!ok) {
-            fontStatus("Нет ответа от uid 1000 — откройте режим игры и повторите", Ui.ERROR);
+            fontStatus("uid 1000 không phản hồi — hãy mở chế độ game rồi thử lại", Ui.ERROR);
         } else if (out.contains("SRC_UNREADABLE")) {
-            fontStatus("uid 1000 не может прочитать файл-источник", Ui.ERROR);
+            fontStatus("uid 1000 không đọc được tệp nguồn", Ui.ERROR);
         } else if (out.contains("SRC_STALE")) {
-            fontStatus("Источник не совпадает с выбранным файлом — повторите выбор", Ui.ERROR);
+            fontStatus("Nguồn không khớp với tệp đã chọn — hãy chọn lại", Ui.ERROR);
         } else if (out.contains("NO_FONT_FOUND")) {
-            fontStatus("В /data/vfonts/ нет доступных TTF-файлов. Скачайте шрифт в iTheme и повторите.", Ui.ERROR);
+            fontStatus("Trong /data/vfonts/ không có tệp TTF nào. Hãy tải phông chữ trong iTheme rồi thử lại.", Ui.ERROR);
         } else if (out.contains("FAIL:MISSING_TTF:") && !out.contains("OK:")) {
-            fontStatus("TTF-файл исчез во время установки. Повторите поиск. Подробности во вкладке Shell.", Ui.ERROR);
+            fontStatus("Tệp TTF biến mất trong lúc cài đặt. Hãy tìm lại. Chi tiết xem ở tab Shell.", Ui.ERROR);
         } else if (out.contains("NO_PKG")) {
-            fontStatus("Пакет iTheme определить не удалось — подробности в консоли", Ui.ERROR);
+            fontStatus("Không xác định được gói iTheme — xem chi tiết trong console", Ui.ERROR);
         } else if (!out.contains("OK:")) {
-            fontStatus("Запись не удалась — вывод в консоли (вкладка Shell)", Ui.ERROR);
+            fontStatus("Ghi thất bại — xem kết quả trong console (tab Shell)", Ui.ERROR);
         } else {
             int okCount = countOccurrences(out, "OK:");
             int failCount = countOccurrences(out, "FAIL:");
-            String msg = "Заменено файлов: " + okCount
-                    + (failCount > 0 ? ", ошибок: " + failCount : "");
+            String msg = "Số tệp đã thay: " + okCount
+                    + (failCount > 0 ? ", lỗi: " + failCount : "");
             if (out.contains("APP_FAILED")) {
-                fontStatus(msg + " — iTheme не открылся, вывод в консоли", Ui.ERROR);
+                fontStatus(msg + " — iTheme không mở được, xem kết quả trong console", Ui.ERROR);
             } else if (out.contains("APP_OPENED")) {
-                fontStatus(msg + ", iTheme открыт — примените шрифт и перезагрузитесь — применяйте тему", Ui.ACCENT);
+                fontStatus(msg + ", iTheme đã mở — hãy áp dụng phông chữ và khởi động lại — hãy áp dụng chủ đề", Ui.ACCENT);
             } else {
-                fontStatus(msg + " — подробности в консоли", Ui.TEXT);
+                fontStatus(msg + " — xem chi tiết trong console", Ui.TEXT);
             }
         }
     }
@@ -3263,15 +3263,15 @@ public class Main extends Activity {
     private void stageFontFile(final Uri src) {
         if (src == null) return;
         if (fontStaging) {
-            toast("Файл ещё готовится");
+            toast("Tệp đang được chuẩn bị");
             return;
         }
         fontStaging = true;
         fontStagedPath = null;
         fontStagedMd5 = null;
-        fontStatus("Читаю файл…", Ui.MUTED);
+        fontStatus("Đang đọc tệp…", Ui.MUTED);
         final String picked = queryDisplayName(src);
-        if (fontThemeFileText != null) fontThemeFileText.setText("подготовка…");
+        if (fontThemeFileText != null) fontThemeFileText.setText("đang chuẩn bị…");
 
         new Thread(new Runnable() {
             @Override public void run() {
@@ -3309,7 +3309,7 @@ public class Main extends Activity {
                             }
                         }
                         if (staged == null) {
-                            throw firstErr != null ? firstErr : new Exception("копирование не удалось");
+                            throw firstErr != null ? firstErr : new Exception("sao chép thất bại");
                         }
                         md5 = md5File(new File(staged));
                         path = staged;
@@ -3331,7 +3331,7 @@ public class Main extends Activity {
                             fontStagedMd5 = fm;
                             fontStagedBytes = size;
                             fontThemeFileText.setText(picked + " · " + sizeTxt + "\n" + fp);
-                            fontStatus("Файл готов, md5 " + fm + " — можно устанавливать", Ui.TEXT);
+                            fontStatus("Tệp sẵn sàng, md5 " + fm + " — có thể cài đặt", Ui.TEXT);
                         }
                     });
                 } catch (final Throwable t) {
@@ -3340,8 +3340,8 @@ public class Main extends Activity {
                             fontStaging = false;
                             fontStagedPath = null;
                             fontStagedMd5 = null;
-                            fontThemeFileText.setText("файл не выбран");
-                            fontStatus("Ошибка подготовки: " + t.getMessage(), Ui.ERROR);
+                            fontThemeFileText.setText("chưa chọn tệp");
+                            fontStatus("Lỗi chuẩn bị: " + t.getMessage(), Ui.ERROR);
                         }
                     });
                 }
@@ -3376,9 +3376,9 @@ public class Main extends Activity {
         Uri dst = cr.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, cv);
         if (dst == null) throw new Exception("MediaStore insert failed");
         try (InputStream in = cr.openInputStream(src)) {
-            if (in == null) throw new Exception("источник недоступен");
+            if (in == null) throw new Exception("không truy cập được nguồn");
             try (OutputStream out = cr.openOutputStream(dst)) {
-                if (out == null) throw new Exception("хранилище недоступно");
+                if (out == null) throw new Exception("không truy cập được bộ nhớ");
                 byte[] buf = new byte[64 * 1024];
                 int n;
                 while ((n = in.read(buf)) > 0) out.write(buf, 0, n);
@@ -3412,11 +3412,11 @@ public class Main extends Activity {
 
     // ----------------------------------------------------------------- misc
     private static final String ADB_EXAMPLES =
-            "# команда через канал uid1000\n"
+            "# lệnh qua kênh uid1000\n"
             + "adb shell content call --uri content://com.poc.gctune.bridge --method exec --arg \"id\" --extra wait:i:8\n\n"
-            + "# результат: ack|STATUS|rc|base64\n"
+            + "# kết quả: ack|STATUS|rc|base64\n"
             + "adb shell settings get secure gc_tune_adb_out\n\n"
-            + "# или скрипт из репозитория\n"
+            + "# hoặc script từ kho mã\n"
             + ".\\gctune-adb.ps1 \"id\"";
 
     /** Whitelist + appops + standby for ANY package, applied via uid1000. */
@@ -3482,17 +3482,17 @@ public class Main extends Activity {
         root.setPadding(Ui.dp(this, 18), Ui.dp(this, 22), Ui.dp(this, 18), Ui.dp(this, 30));
         scroll.addView(root, new FrameLayout.LayoutParams(-1, -2));
 
-        root.addView(pageTitle(Ui.label(this, "Прочее", 26f, Ui.TEXT),
-                "Живучесть фона и ADB-мост"));
+        root.addView(pageTitle(Ui.label(this, "Khác", 26f, Ui.TEXT),
+                "Chạy nền bền vững và cầu ADB"));
 
         // ---- unkillable background: pick any installed app, toggle protection & freeze
         LinearLayout keepCard = Ui.col(this);
         keepCard.setBackground(Ui.shape(this, Ui.SURFACE, 24f, Ui.BORDER_SOFT, 1.2f));
         keepCard.setPadding(Ui.dp(this, 16), Ui.dp(this, 16), Ui.dp(this, 16), Ui.dp(this, 16));
-        keepCard.addView(Ui.section(this, "Защита приложений от выгрузки"));
+        keepCard.addView(Ui.section(this, "Chống ứng dụng bị hệ thống tắt"));
 
         TextView desc = Ui.text(this,
-                "Добавление в белый список батареи Doze (cmd deviceidle whitelist) + разрешение фоновой работы без ограничений.",
+                "Thêm vào danh sách trắng pin Doze (cmd deviceidle whitelist) + cho phép chạy nền không giới hạn.",
                 11.5f, Ui.MUTED);
         LinearLayout.LayoutParams descLp = new LinearLayout.LayoutParams(-1, -2);
         descLp.topMargin = Ui.dp(this, 4);
@@ -3505,9 +3505,9 @@ public class Main extends Activity {
         targetBox.setPadding(Ui.dp(this, 14), Ui.dp(this, 12), Ui.dp(this, 14), Ui.dp(this, 12));
 
         LinearLayout targetCol = Ui.col(this);
-        miscHardenTarget = Ui.text(this, "Цель: GC Tune", 14f, Ui.TEXT);
+        miscHardenTarget = Ui.text(this, "Mục tiêu: GC Tune", 14f, Ui.TEXT);
         targetCol.addView(miscHardenTarget);
-        TextView targetSub = Ui.text(this, "Нажмите «Выбрать из списка» для смены", 11f, Ui.MUTED);
+        TextView targetSub = Ui.text(this, "Nhấn «Chọn từ danh sách» để đổi", 11f, Ui.MUTED);
         LinearLayout.LayoutParams tsLp = new LinearLayout.LayoutParams(-1, -2);
         tsLp.topMargin = Ui.dp(this, 2);
         targetCol.addView(targetSub, tsLp);
@@ -3534,13 +3534,13 @@ public class Main extends Activity {
 
         LinearLayout btnRow = Ui.row(this);
         View pickBtn = pillButton(M3Icons.folder(Ui.ACCENT, Ui.dp(this, 18)),
-                "Список приложений",
+                "Danh sách ứng dụng",
                 new View.OnClickListener() {
                     @Override public void onClick(View v) { pickHardenApp(); }
                 });
         btnRow.addView(pickBtn, new LinearLayout.LayoutParams(0, -2, 1f));
         View frzBtn = pillButton(M3Icons.stop(Ui.ACCENT, Ui.dp(this, 18)),
-                "Заморозить",
+                "Đóng băng",
                 new View.OnClickListener() {
                     @Override public void onClick(View v) { freezeRun(); }
                 });
@@ -3557,7 +3557,7 @@ public class Main extends Activity {
         keepCard.addView(miscHardenStatus, hardenStLp);
 
         LinearLayout keepRow = Ui.row(this);
-        keepRow.addView(Ui.label(this, "Своя служба в фоне", 14f, Ui.TEXT),
+        keepRow.addView(Ui.label(this, "Dịch vụ riêng chạy nền", 14f, Ui.TEXT),
                 new LinearLayout.LayoutParams(0, -2, 1f));
 
         keepSwitch = new MaterialSwitch(this);
@@ -3589,12 +3589,12 @@ public class Main extends Activity {
         LinearLayout bridgeCard = Ui.col(this);
         bridgeCard.setBackground(Ui.shape(this, Ui.SURFACE, 24f, Ui.BORDER_SOFT, 1.2f));
         bridgeCard.setPadding(Ui.dp(this, 16), Ui.dp(this, 16), Ui.dp(this, 16), Ui.dp(this, 16));
-        bridgeCard.addView(Ui.section(this, "ADB-мост"));
+        bridgeCard.addView(Ui.section(this, "Cầu ADB"));
 
         LinearLayout bridgeRow = Ui.row(this);
         LinearLayout bridgeLbl = Ui.col(this);
-        bridgeLbl.addView(Ui.label(this, "Команды по ADB", 14f, Ui.TEXT));
-        TextView bridgeSub = Ui.text(this, "Только adb shell и root", 11.5f, Ui.MUTED);
+        bridgeLbl.addView(Ui.label(this, "Lệnh qua ADB", 14f, Ui.TEXT));
+        TextView bridgeSub = Ui.text(this, "Chỉ adb shell và root", 11.5f, Ui.MUTED);
         LinearLayout.LayoutParams bridgeSubLp = new LinearLayout.LayoutParams(-1, -2);
         bridgeSubLp.topMargin = Ui.dp(this, 3);
         bridgeLbl.addView(bridgeSub, bridgeSubLp);
@@ -3635,7 +3635,7 @@ public class Main extends Activity {
         bridgeCard.addView(exCard, exLp);
 
         View copyEx = pillButton(M3Icons.clipboard(Ui.ACCENT, Ui.dp(this, 18)),
-                "Копировать команды",
+                "Sao chép lệnh",
                 new View.OnClickListener() {
                     @Override public void onClick(View v) {
                         try {
@@ -3644,9 +3644,9 @@ public class Main extends Activity {
                                             getSystemService(CLIPBOARD_SERVICE);
                             cl.setPrimaryClip(android.content.ClipData.newPlainText(
                                     "GC Tune ADB", ADB_EXAMPLES));
-                            toast("Команды скопированы");
+                            toast("Đã sao chép lệnh");
                         } catch (Throwable t) {
-                            toast("Не удалось скопировать");
+                            toast("Không sao chép được");
                         }
                     }
                 });
@@ -3654,7 +3654,7 @@ public class Main extends Activity {
         copyExLp.topMargin = Ui.dp(this, 10);
         bridgeCard.addView(copyEx, copyExLp);
 
-        TextView bridgeWarn = Ui.text(this, "Включайте только на время работы.", 11f, Ui.MUTED);
+        TextView bridgeWarn = Ui.text(this, "Chỉ bật khi đang sử dụng.", 11f, Ui.MUTED);
         LinearLayout.LayoutParams warnLp = new LinearLayout.LayoutParams(-1, -2);
         warnLp.topMargin = Ui.dp(this, 10);
         bridgeCard.addView(bridgeWarn, warnLp);
@@ -3704,10 +3704,10 @@ public class Main extends Activity {
             int pad = Ui.dp(this, 14);
             body.setPadding(pad, pad, pad, pad);
 
-            body.addView(Ui.section(this, "Приложение"));
+            body.addView(Ui.section(this, "Ứng dụng"));
 
             final EditText q = new EditText(this);
-            q.setHint("Поиск");
+            q.setHint("Tìm kiếm");
             q.setHintTextColor(Ui.MUTED);
             q.setTextColor(Ui.TEXT);
             q.setTextSize(14f);
@@ -3755,7 +3755,7 @@ public class Main extends Activity {
                         }
                         if (list.getChildCount() == 0) {
                             TextView none = Ui.text(Main.this,
-                                    "Ничего не найдено", 13f, Ui.MUTED);
+                                    "Không tìm thấy gì", 13f, Ui.MUTED);
                             none.setGravity(Gravity.CENTER);
                             LinearLayout.LayoutParams nLp =
                                     new LinearLayout.LayoutParams(-1, -2);
@@ -3810,7 +3810,7 @@ public class Main extends Activity {
                 }
             }).start();
         } catch (Throwable t) {
-            toast("Список приложений недоступен");
+            toast("Danh sách ứng dụng không khả dụng");
         }
     }
 
@@ -3896,7 +3896,7 @@ public class Main extends Activity {
         if (!apply(cmd)) {
             miscRun = false;
             if (miscHardenStatus != null) {
-                miscHardenStatus.setText("не отправлено — нет статуса игры или канал занят");
+                miscHardenStatus.setText("chưa gửi — chưa có trạng thái game hoặc kênh đang bận");
                 miscHardenStatus.setTextColor(Ui.ERROR);
             }
         }
@@ -3904,20 +3904,20 @@ public class Main extends Activity {
 
     /** Sends the hardening probe for the stored target through the channel. */
     private void runHarden() {
-        runMisc("harden", hardenCommand(hardenPkg()), "добавляю в белый список Doze…");
+        runMisc("harden", hardenCommand(hardenPkg()), "đang thêm vào danh sách trắng Doze…");
     }
 
     private void runUnharden() {
-        runMisc("unharden", unhardenCommand(hardenPkg()), "удаляю из белого списка Doze…");
+        runMisc("unharden", unhardenCommand(hardenPkg()), "đang xóa khỏi danh sách trắng Doze…");
     }
 
     private void freezeRun() {
         runMisc("freeze", freezeCommand(hardenPkg()),
-                "замораживаю " + prefs.getString("harden_label", "GC Tune") + "…");
+                "đang đóng băng " + prefs.getString("harden_label", "GC Tune") + "…");
     }
 
     private void unfreezeRun() {
-        runMisc("unfreeze", unfreezeCommand(hardenPkg()), "снимаю заморозку…");
+        runMisc("unfreeze", unfreezeCommand(hardenPkg()), "đang bỏ đóng băng…");
     }
 
     /** Short read-back of the DOZE/SUSP/DIS lines produced by the commands. */
@@ -3926,7 +3926,7 @@ public class Main extends Activity {
         if (miscHardenStatus == null) return;
         String out = (ok && e != null && e.out != null) ? e.out : "";
         if (!ok) {
-            miscHardenStatus.setText("Нет ответа — откройте режим игры");
+            miscHardenStatus.setText("Không phản hồi — hãy mở chế độ game");
             miscHardenStatus.setTextColor(Ui.ERROR);
             return;
         }
@@ -3936,11 +3936,11 @@ public class Main extends Activity {
         boolean hasMarkers = out.contains("SUSP=") || out.contains("DIS=");
         if ("freeze".equals(miscAction)) {
             if (susp || dis) {
-                miscHardenStatus.setText("Заморожено"
-                        + (dis ? " (отключено)" : " (suspended)"));
+                miscHardenStatus.setText("Đã đóng băng"
+                        + (dis ? " (đã tắt)" : " (suspended)"));
                 miscHardenStatus.setTextColor(Ui.ACCENT);
             } else if (hasMarkers) {
-                miscHardenStatus.setText("Фон ограничен, suspend недоступен");
+                miscHardenStatus.setText("Nền bị hạn chế, không dùng được suspend");
                 miscHardenStatus.setTextColor(Ui.MUTED);
             } else {
                 miscHardenStatus.setText(out.replace("\n", " · "));
@@ -3948,23 +3948,23 @@ public class Main extends Activity {
             }
         } else if ("unfreeze".equals(miscAction)) {
             if (hasMarkers && !susp && !dis) {
-                miscHardenStatus.setText("Разморожено");
+                miscHardenStatus.setText("Đã bỏ đóng băng");
                 miscHardenStatus.setTextColor(Ui.ACCENT);
             } else if (hasMarkers) {
-                miscHardenStatus.setText("Частично — вывод в консоли");
+                miscHardenStatus.setText("Một phần — xem kết quả trong console");
                 miscHardenStatus.setTextColor(Ui.ERROR);
             } else {
                 miscHardenStatus.setText(out.replace("\n", " · "));
                 miscHardenStatus.setTextColor(Ui.TEXT);
             }
         } else if ("unharden".equals(miscAction)) {
-            miscHardenStatus.setText("Защита снята (удалено из белого списка)");
+            miscHardenStatus.setText("Đã gỡ bảo vệ (đã xóa khỏi danh sách trắng)");
             miscHardenStatus.setTextColor(Ui.MUTED);
         } else if (out.contains("DOZE=false")) {
-            miscHardenStatus.setText("Не в белом списке — проверьте консоль");
+            miscHardenStatus.setText("Không có trong danh sách trắng — hãy kiểm tra console");
             miscHardenStatus.setTextColor(Ui.ERROR);
         } else if (out.contains("DOZE=true") || out.contains("DOZE=")) {
-            miscHardenStatus.setText("Защищено: белый список Doze + фон разрешён");
+            miscHardenStatus.setText("Đã bảo vệ: danh sách trắng Doze + cho phép chạy nền");
             miscHardenStatus.setTextColor(Ui.ACCENT);
         } else {
             miscHardenStatus.setText(out.replace("\n", " · "));
@@ -3977,7 +3977,7 @@ public class Main extends Activity {
         boolean br = prefs.getBoolean("adb_bridge", true);
         String curPkg = hardenPkg();
         if (miscHardenTarget != null) {
-            miscHardenTarget.setText("Цель: "
+            miscHardenTarget.setText("Mục tiêu: "
                     + prefs.getString("harden_label", "GC Tune"));
         }
         if (targetSw != null) {
@@ -3985,11 +3985,11 @@ public class Main extends Activity {
             targetSw.setChecked(isProtected);
         }
         if (miscKeepStatus != null) {
-            miscKeepStatus.setText(keep ? "служба активна" : "выкл.");
+            miscKeepStatus.setText(keep ? "dịch vụ đang chạy" : "tắt");
             miscKeepStatus.setTextColor(keep ? Ui.ACCENT : Ui.MUTED);
         }
         if (miscBridgeStatus != null) {
-            StringBuilder sb = new StringBuilder(br ? "включён" : "выключен");
+            StringBuilder sb = new StringBuilder(br ? "đang bật" : "đang tắt");
             if (br && bridgeLastCmd != null && !bridgeLastCmd.isEmpty()) {
                 sb.append(" · ").append(bridgeLastCmd);
             }
@@ -4032,12 +4032,12 @@ public class Main extends Activity {
      * the waiting binder call.
      */
     private Bundle bridgeSend(String cmd) {
-        if (busy) return bridgeErr("busy", "канал занят — дождитесь текущей команды", 0);
+        if (busy) return bridgeErr("busy", "kênh đang bận — hãy đợi lệnh hiện tại", 0);
         boolean game = isGame();
         boolean req = prefs.getBoolean("require_game", true);
         if (req && !game) {
-            String msg = "нет статуса игры — добавьте GC Tune в список игр "
-                    + "(Ультраигровой режим → Поддерживаемые игры)";
+            String msg = "chưa có trạng thái game — hãy thêm GC Tune vào danh sách game "
+                    + "(Chế độ Ultra Game → Game được hỗ trợ)";
             writeAdbMirror(0, "ERROR", "-", msg);
             return bridgeErr("no_game", msg, 0);
         }
@@ -4045,7 +4045,7 @@ public class Main extends Activity {
         bridgeLastCmd = c;
         updateMiscStatus();
         if (!apply(c)) {
-            String msg = "не отправлено — канал занят или нет статуса игры";
+            String msg = "chưa gửi — kênh đang bận hoặc chưa có trạng thái game";
             writeAdbMirror(0, "ERROR", "-", msg);
             return bridgeErr("send_failed", msg, 0);
         }
@@ -4064,7 +4064,7 @@ public class Main extends Activity {
         if (ok) {
             out = e != null && e.out != null ? e.out : "";
         } else {
-            out = failReason != null ? failReason : "нет ответа от uid 1000";
+            out = failReason != null ? failReason : "uid 1000 không phản hồi";
             rc = RC_UNKNOWN;
         }
         writeAdbMirror(ack, ok ? "OK" : "FAIL", String.valueOf(rc), out);
@@ -4085,11 +4085,11 @@ public class Main extends Activity {
         @Override
         public Bundle exec(final String cmd, final int waitSec) {
             if (cmd == null || cmd.trim().isEmpty()) {
-                return bridgeErr("empty", "пустая команда", 0);
+                return bridgeErr("empty", "lệnh trống", 0);
             }
             if (!prefs.getBoolean("adb_bridge", true)) {
                 return bridgeErr("disabled",
-                        "мост выключен — включите «Команды по ADB» на странице «Прочее»", 0);
+                        "cầu đang tắt — hãy bật «Lệnh qua ADB» ở trang «Khác»", 0);
             }
             bridgeResult = null;
             final CountDownLatch latch = new CountDownLatch(1);
@@ -4163,9 +4163,9 @@ public class Main extends Activity {
                 appendStyled(sb, "$ ", Ui.ACCENT, 12f);
                 appendStyled(sb, cmd + "\n", Ui.TEXT, 12f);
                 if (e.pending) {
-                    appendStyled(sb, "…выполняется\n", Ui.PROMPT, 11f);
+                    appendStyled(sb, "…đang chạy\n", Ui.PROMPT, 11f);
                 } else if (e.failed) {
-                    appendStyled(sb, "нет ответа от uid 1000\n", Ui.ERROR, 11f);
+                    appendStyled(sb, "uid 1000 không phản hồi\n", Ui.ERROR, 11f);
                 } else {
                     boolean err = e.rc != RC_UNKNOWN && e.rc != 0;
                     String out = e.out != null ? e.out : "";
@@ -4215,7 +4215,7 @@ public class Main extends Activity {
             byte[] data = Base64.decode(base64Output, Base64.DEFAULT);
             return new String(data, StandardCharsets.UTF_8);
         } catch (Exception e) {
-            return "Ошибка декодирования: " + e.getMessage();
+            return "Lỗi giải mã: " + e.getMessage();
         }
     }
 
@@ -4249,10 +4249,10 @@ public class Main extends Activity {
         intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         try {
-            startActivityForResult(Intent.createChooser(intent, "Файл со скриптом (.sh / .txt)"),
+            startActivityForResult(Intent.createChooser(intent, "Tệp script (.sh / .txt)"),
                     REQ_IMPORT_FILE);
         } catch (Throwable t) {
-            toast("Не удалось открыть проводник");
+            toast("Không mở được trình quản lý tệp");
         }
     }
 
@@ -4291,9 +4291,9 @@ public class Main extends Activity {
             if (sb.length() > 0 && !sb.toString().endsWith(";")) sb.append(";");
             cmdInput.setText(sb.toString());
             cmdInput.setSelection(cmdInput.getText().length());
-            toast("Импортировано строк: " + lines);
+            toast("Số dòng đã nhập: " + lines);
         } catch (Exception e) {
-            logStatus("Ошибка импорта: " + e.getMessage());
+            logStatus("Lỗi nhập: " + e.getMessage());
         }
     }
 
@@ -4306,7 +4306,7 @@ public class Main extends Activity {
             if (pasteData != null) {
                 cmdInput.setText(pasteData);
                 cmdInput.setSelection(cmdInput.getText().length());
-                toast("Вставлено из буфера");
+                toast("Đã dán từ bộ nhớ tạm");
             }
         }
     }
@@ -4315,7 +4315,7 @@ public class Main extends Activity {
     private void executeCurrentCommand() {
         String raw = cmdInput.getText().toString().trim();
         if (raw.isEmpty()) {
-            toast("Введите команду");
+            toast("Nhập lệnh");
             return;
         }
 
@@ -4337,8 +4337,8 @@ public class Main extends Activity {
         boolean game = isGame();
         boolean req = prefs.getBoolean("require_game", true);
         if (req && !game) {
-            logStatus("GC Tune не в списке игр Game Cube");
-            toast("Добавьте GC Tune: Ультраигровой режим → Поддерживаемые игры → Другое");
+            logStatus("GC Tune không có trong danh sách game của Game Cube");
+            toast("Hãy thêm GC Tune: Chế độ Ultra Game → Game được hỗ trợ → Khác");
             refreshStatus();
             return false;
         }
@@ -4383,8 +4383,8 @@ public class Main extends Activity {
             published = body.equals(Settings.Secure.getString(cr, "gc_tune_cmd"));
         } catch (Throwable ignored) {}
         if (!published) {
-            toast("Команда не опубликована для демона: нет WRITE_SECURE_SETTINGS");
-            logStatus("нет WRITE_SECURE_SETTINGS — выполните: adb shell pm grant com.poc.gctune android.permission.WRITE_SECURE_SETTINGS");
+            toast("Lệnh chưa được đăng cho daemon: thiếu WRITE_SECURE_SETTINGS");
+            logStatus("thiếu WRITE_SECURE_SETTINGS — hãy chạy: adb shell pm grant com.poc.gctune android.permission.WRITE_SECURE_SETTINGS");
         }
 
         Entry e = new Entry();
@@ -4409,16 +4409,16 @@ public class Main extends Activity {
             e.out = null;
         }
         busy = false;
-        resolveBridge(false, e, "отменено");
+        resolveBridge(false, e, "đã hủy");
         if (themeRun) {
             themeRun = false;
             hideHint();
-            themeStatus("Отменено", Ui.MUTED);
+            themeStatus("Đã hủy", Ui.MUTED);
         }
         if (fontThemeRun) {
             fontThemeRun = false;
             hideFontHint();
-            fontStatus("Отменено", Ui.MUTED);
+            fontStatus("Đã hủy", Ui.MUTED);
         }
         setWinTitle(BENIGN_TITLE);
         renderLog();
@@ -4447,8 +4447,8 @@ public class Main extends Activity {
         if (fontThemeRun) fontResult(ok, e);
         if (stRun) settingsThemeResult(ok, e);
         if (miscRun) miscResult(ok, e);
-        resolveBridge(ok, e, "нет ответа от uid 1000");
-        if (!ok) toast("Нет ответа — откройте шторку Game Cube");
+        resolveBridge(ok, e, "uid 1000 không phản hồi");
+        if (!ok) toast("Không phản hồi — hãy mở thanh Game Cube");
         refreshStatus();
     }
 
@@ -4477,7 +4477,7 @@ public class Main extends Activity {
 
         if (busy) {
             statusDot.setImageDrawable(iconDotOn);
-            statusText.setText("выполняется…");
+            statusText.setText("đang chạy…");
             statusText.setTextColor(Ui.ACCENT);
             runBtn.setImageDrawable(iconStop);
             runBtn.setAlpha(1f);
@@ -4494,11 +4494,11 @@ public class Main extends Activity {
 
         if (game) {
             statusDot.setImageDrawable(iconDotOn);
-            statusText.setText("в списке игр");
+            statusText.setText("có trong danh sách game");
             statusText.setTextColor(Ui.ACCENT);
         } else {
             statusDot.setImageDrawable(iconDotOff);
-            statusText.setText("не в списке игр");
+            statusText.setText("không có trong danh sách game");
             statusText.setTextColor(Ui.MUTED);
         }
     }

@@ -16,7 +16,7 @@ import android.util.Log;
  * tick - so the process always comes back even if the task was cleared.
  *
  * A plain force-stop by the user still wins (the system drops all alarms
- * until the next manual launch) - documented on the "Прочее" page.
+ * until the next manual launch) - documented on the "Khác" page.
  */
 public class KeepAliveReceiver extends BroadcastReceiver {
 

@@ -21,7 +21,7 @@ import android.util.Log;
  *  - onTaskRemoved: swipe-out schedules a 2 s watchdog alarm restart
  *  - KeepAliveReceiver: re-raises priority every ~12 min, even in doze
  *  - uid1000 channel hardening (deviceidle whitelist / appops / standby)
- *    applied from the "Прочее" page - privileges, not just permissions
+ *    applied from the "Khác" page - privileges, not just permissions
  *
  * force-stop by the user still disables everything until the next manual
  * launch - that is an Android invariant no app can bypass.
@@ -109,7 +109,7 @@ public class KeepAliveService extends Service {
             Notification n = new Notification.Builder(this, CH)
                     .setSmallIcon(android.R.drawable.ic_lock_idle_low_battery)
                     .setContentTitle("GC Tune")
-                    .setContentText("Защита фона активна")
+                    .setContentText("Chế độ bảo vệ nền đang bật")
                     .setWhen(System.currentTimeMillis())
                     .setOngoing(true)
                     .build();

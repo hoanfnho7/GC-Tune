@@ -53,7 +53,7 @@ public class PrefsActivity extends Activity {
         root.addView(switchRow());
         root.addView(daemonSwitchRow());
         root.addView(timeoutRow());
-        root.addView(navRow("Поддерживаемые игры", new View.OnClickListener() {
+        root.addView(navRow("Game được hỗ trợ", new View.OnClickListener() {
             @Override public void onClick(View v) {
                 try {
                     startActivity(SetupActivity.gameSettingsIntent());
@@ -62,7 +62,7 @@ public class PrefsActivity extends Activity {
                 }
             }
         }));
-        root.addView(navRow("Первичная настройка", new View.OnClickListener() {
+        root.addView(navRow("Thiết lập ban đầu", new View.OnClickListener() {
             @Override public void onClick(View v) {
                 prefs.edit().putBoolean("setup_done", false).apply();
                 startActivity(new Intent(PrefsActivity.this, SetupActivity.class));
@@ -70,7 +70,7 @@ public class PrefsActivity extends Activity {
             }
         }));
 
-        TextView about = Ui.text(this, "GC Tune 1.0 · канал Game Cube", 11f, Ui.MUTED);
+        TextView about = Ui.text(this, "GC Tune 1.0 · kênh Game Cube", 11f, Ui.MUTED);
         about.setGravity(Gravity.CENTER);
         LinearLayout.LayoutParams aboutLp = new LinearLayout.LayoutParams(-2, -2);
         aboutLp.gravity = Gravity.CENTER_HORIZONTAL;
@@ -92,7 +92,7 @@ public class PrefsActivity extends Activity {
         });
         row.addView(back, new LinearLayout.LayoutParams(Ui.dp(this, 40), Ui.dp(this, 40)));
 
-        TextView title = Ui.label(this, "Настройки", 20f, Ui.TEXT);
+        TextView title = Ui.label(this, "Cài đặt", 20f, Ui.TEXT);
         LinearLayout.LayoutParams titleLp = new LinearLayout.LayoutParams(-2, -2);
         titleLp.leftMargin = Ui.dp(this, 10);
         row.addView(title, titleLp);
@@ -106,7 +106,7 @@ public class PrefsActivity extends Activity {
     private View switchRow() {
         LinearLayout row = rowBase();
 
-        TextView t = Ui.text(this, "Требовать статус игры", 14f, Ui.TEXT);
+        TextView t = Ui.text(this, "Yêu cầu trạng thái game", 14f, Ui.TEXT);
         row.addView(t, new LinearLayout.LayoutParams(0, -2, 1f));
 
         Switch sw = new Switch(this);
@@ -130,7 +130,7 @@ public class PrefsActivity extends Activity {
     private View daemonSwitchRow() {
         LinearLayout row = rowBase();
 
-        TextView t = Ui.text(this, "Авто-исполнение (демон)", 14f, Ui.TEXT);
+        TextView t = Ui.text(this, "Tự thực thi (daemon)", 14f, Ui.TEXT);
         row.addView(t, new LinearLayout.LayoutParams(0, -2, 1f));
 
         Switch sw = new Switch(this);
@@ -156,7 +156,7 @@ public class PrefsActivity extends Activity {
     private View timeoutRow() {
         LinearLayout row = rowBase();
 
-        TextView t = Ui.text(this, "Таймаут, сек", 14f, Ui.TEXT);
+        TextView t = Ui.text(this, "Thời gian chờ, giây", 14f, Ui.TEXT);
         row.addView(t, new LinearLayout.LayoutParams(0, -2, 1f));
 
         timeoutInput = new EditText(this);

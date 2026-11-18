@@ -21,7 +21,7 @@ android {
 
     signingConfigs {
         release {
-            storeFile file('../../poc_gcrce/poc.keystore')
+            storeFile file('gctune.keystore')
             storePassword 'android'
             keyAlias 'gd'
             keyPassword 'android'
