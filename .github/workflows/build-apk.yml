@@ -3,7 +3,11 @@ name: Build APK
 on:
   push:
     branches: [ main, master ]
+    paths-ignore: [ '**.md' ]
   workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
   build:
@@ -21,7 +25,25 @@ jobs:
           gradle-version: '8.11.1'
       - name: Build debug APK
         run: gradle :app:assembleDebug --no-daemon
-      - uses: actions/upload-artifact@v4
+      - name: Đổi tên APK
+        run: cp app/build/outputs/apk/debug/app-debug.apk GC-Tune-vi.apk
+      - uses: softprops/action-gh-release@v2
         with:
-          name: GC-Tune-vi-apk
-          path: app/build/outputs/apk/debug/*.apk
+          tag_name: vi-${{ github.run_number }}
+          name: GC Tune bản Việt hoá (build ${{ github.run_number }})
+          files: GC-Tune-vi.apk
+          body: |
+            ## GC Tune - Bản Việt hoá
+
+            Đây là bản **dịch giao diện sang tiếng Việt** của GC-Tune, một dự án của tác giả gốc [Bebrazui](https://github.com/Bebrazui/GC-Tune). Bản này chỉ đổi chữ hiển thị từ tiếng Nga sang tiếng Việt, không thêm hay sửa tính năng.
+
+            ### Cài đặt
+            1. **Gỡ bản GC Tune cũ** (nếu có), vì bản này ký bằng khoá khác bản gốc.
+            2. Cài file `GC-Tune-vi.apk` bên dưới.
+            3. Cấp quyền một lần qua ADB:
+               `adb shell pm grant com.poc.gctune android.permission.WRITE_SECURE_SETTINGS`
+            4. Vào **Cài đặt → Chế độ Ultra Game (Game Cube) → Game được hỗ trợ → Khác**, chọn **GC Tune** để thêm vào danh sách.
+
+            ### Ghi chú
+            - Mọi bản quyền thuộc về tác giả gốc. Xem README để biết chi tiết.
+            - Có chỗ dịch chưa hay hoặc bị tràn chữ thì báo ở tab Issues.
