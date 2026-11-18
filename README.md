@@ -1,3 +1,9 @@
+> **Bản Việt hoá (Vietnamese localization)**
+> Đây là bản fork của [Bebrazui/GC-Tune](https://github.com/Bebrazui/GC-Tune), do mình dịch giao diện từ tiếng Nga sang tiếng Việt cho mục đích cá nhân. Mình **không phải tác giả** của ứng dụng; toàn bộ mã nguồn và công sức thuộc về tác giả gốc. Bản dịch chỉ đổi chuỗi hiển thị, không thay đổi tính năng.
+> Tải APK ở mục [Releases](../../releases). Cần bản gốc thì vào repo của tác giả.
+>
+> This is a fork of [Bebrazui/GC-Tune](https://github.com/Bebrazui/GC-Tune) with the UI translated from Russian to Vietnamese. All credit for the app goes to the original author.
+
 # GC-Tune
 
 [![GitHub Release](https://img.shields.io/github/v/release/Bebrazui/GC-Tune?style=flat-square&color=2ea44f)](https://github.com/Bebrazui/GC-Tune/releases/latest)
